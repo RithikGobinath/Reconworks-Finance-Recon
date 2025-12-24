@@ -1,0 +1,4 @@
+batch_id,ingested_at_utc,source_name,source_file,source_row_number,entry_id,entry_date,payee,amount,category,account,cost_center,reference,description,row_hash
+864ce48b-1ac3-4834-bd2d-f5375da89a08,2025-12-24T22:39:45+00:00,vendor_payments,data/raw/vendor_payments_sample.csv,1,L9001,2025-12-02,Amazon,48.27,Office Supplies,6100,IT,,Amazon purchase,be41e9d6694afc4be91c8a8dccabebed56ea6ee06eeb6798d1ea3fa0c715cf08
+864ce48b-1ac3-4834-bd2d-f5375da89a08,2025-12-24T22:39:45+00:00,vendor_payments,data/raw/vendor_payments_sample.csv,2,L9002,2025-12-03,Uber,17.90,Travel,6200,Sales,,Ride to client,6fff0d02652f5ca93caabce61ea100b651621acea1ccf6ba18dbaba631538b2f
+864ce48b-1ac3-4834-bd2d-f5375da89a08,2025-12-24T22:39:45+00:00,vendor_payments,data/raw/vendor_payments_sample.csv,3,L9003,2025-12-05,Starbucks,6.45,Meals,6300,Sales,,Coffee,43482207dc5a38426832040cda4aec91b4dacee0381d8c0bcaf5177230a2fb5e

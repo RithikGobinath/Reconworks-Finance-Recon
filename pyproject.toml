@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reconworks"
+version = "0.1.0"
+description = "ReconWorks: Finance Ops Reconciliation & Reporting Toolkit"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.24",
+  "rapidfuzz>=3.0",
+]

@@ -1,0 +1,10 @@
+[project]
+name = "ReconWorks"
+output_dir = "out"
+database_path = "out/sqlite/reconworks.db"
+
+[sources.transactions]
+path = "data/raw/transactions*.csv"
+
+[sources.vendor_payments]
+path = "data/raw/vendor_payments*.csv"

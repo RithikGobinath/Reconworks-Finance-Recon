@@ -1,0 +1,4 @@
+Entry ID,Entry Date,Payee,Amount,Category,Account,Cost Center,Reference,Description
+L9001,2025-12-02,Amazon,48.27,Office Supplies,6100,IT,,Amazon purchase
+L9002,2025-12-03,Uber,17.90,Travel,6200,Sales,,Ride to client
+L9003,2025-12-05,Starbucks,6.45,Meals,6300,Sales,,Coffee

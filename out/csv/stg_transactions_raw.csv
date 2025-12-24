@@ -1,0 +1,4 @@
+batch_id,ingested_at_utc,source_name,source_file,source_row_number,transaction_id,post_date,transaction_date,merchant,amount,currency,card_last4,memo,row_hash
+864ce48b-1ac3-4834-bd2d-f5375da89a08,2025-12-24T22:39:45+00:00,transactions,data/raw/transactions_sample.csv,1,T1001,2025-12-02,2025-12-01,AMZN Mktp US*2H3K21,48.27,USD,1234,Laptop stand,e0c5adae4b633561df3ead3c6f58533bd1ec20f12241b1ab009dc5185e5ee2dc
+864ce48b-1ac3-4834-bd2d-f5375da89a08,2025-12-24T22:39:45+00:00,transactions,data/raw/transactions_sample.csv,2,T1002,2025-12-03,2025-12-03,UBER TRIP HELP.UBER.COM,17.90,USD,1234,Client visit,30c00bc24dfe58bbd88b21bcd6743d6c413c354064d112fbe95d79eea50b3802
+864ce48b-1ac3-4834-bd2d-f5375da89a08,2025-12-24T22:39:45+00:00,transactions,data/raw/transactions_sample.csv,3,T1003,2025-12-05,2025-12-05,STARBUCKS #04921 MADISON,6.45,USD,5678,,f36810198a1cdbf45eac03461eeffa06653bd18f5859778881862935a0788377
