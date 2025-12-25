@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.pytest_cache/
+out/
+
+# ignore raw datasets, but keep small sample files
+data/raw/*
+!data/raw/*sample*.csv
