@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .pipeline import run_ingest
+from .pipeline import run_ingest, run_mapping
 from .sample_data import write_sample_raw
 
 def main() -> None:
@@ -17,6 +17,12 @@ def main() -> None:
     p_ingest.add_argument("--config", default="config.toml", help="Path to config.toml")
     p_ingest.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
     p_ingest.add_argument("--export-csv", action="store_true", help="Export latest batch staging tables to out/csv/")
+
+    p_map = sub.add_parser("map", help="Stage 2: map raw staging columns into canonical fields")
+    p_map.add_argument("--config", default="config.toml", help="Path to config.toml")
+    p_map.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
+    p_map.add_argument("--batch-id", default=None, help="Batch ID to map (default: latest)")
+    p_map.add_argument("--export-csv", action="store_true", help="Export mapped tables to out/csv/")
 
     args = parser.parse_args()
     repo_root = Path(args.repo_root).resolve()
@@ -32,6 +38,13 @@ def main() -> None:
         for k, v in summary.items():
             print(f"  - {k}: {v} rows")
         print(f"DB: {(repo_root / 'out' / 'sqlite' / 'reconworks.db')}")
+        return
+
+    if args.cmd == "map":
+        summary = run_mapping(repo_root=repo_root, config_path=repo_root / args.config, batch_id=args.batch_id, export_csv=bool(args.export_csv))
+        print("✅ Mapping complete.")
+        for k, v in summary.items():
+            print(f"  - {k}: {v} rows mapped")
         return
 
 if __name__ == "__main__":

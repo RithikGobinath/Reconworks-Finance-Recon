@@ -54,3 +54,36 @@ def insert_ingest_file(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
     values = [row[k] for k in keys]
     conn.execute(f"INSERT INTO ingest_files ({cols}) VALUES ({placeholders});", values)
     conn.commit()
+
+
+def create_mapping_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS mapping_runs (
+            mapped_at_utc TEXT,
+            batch_id TEXT,
+            source_name TEXT,
+            input_table TEXT,
+            output_table TEXT,
+            vendor_col TEXT,
+            date_col TEXT,
+            amount_col TEXT,
+            row_count INTEGER,
+            notes TEXT
+        );
+        """
+    )
+    conn.commit()
+
+def insert_mapping_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
+    keys = list(row.keys())
+    placeholders = ",".join(["?"] * len(keys))
+    cols = ",".join([f'"{k}"' for k in keys])
+    values = [row[k] for k in keys]
+    conn.execute(f"INSERT INTO mapping_runs ({cols}) VALUES ({placeholders});", values)
+    conn.commit()
+
+def latest_batch_id(conn: sqlite3.Connection) -> Optional[str]:
+    cur = conn.execute("SELECT batch_id FROM ingest_files ORDER BY ingested_at_utc DESC LIMIT 1;")
+    row = cur.fetchone()
+    return row[0] if row else None

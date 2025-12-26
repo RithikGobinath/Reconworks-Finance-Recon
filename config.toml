@@ -6,5 +6,15 @@ database_path = "out/sqlite/reconworks.db"
 [sources.transactions]
 path = "data/raw/transactions*.csv"
 
+[sources.transactions.mapping]
+vendor_raw = ["merchant", "merchant_name", "merchantname", "vendor", "payee"]
+date_raw = ["post_date", "postdate", "transaction_date", "transactiondate", "date"]
+amount_raw = ["amount", "amt", "transaction_amount"]
+
 [sources.vendor_payments]
 path = "data/raw/vendor_payments*.csv"
+
+[sources.vendor_payments.mapping]
+vendor_raw = ["payee", "vendor", "merchant", "supplier"]
+date_raw = ["entry_date", "date", "payment_date"]
+amount_raw = ["amount", "amt", "payment_amount"]
