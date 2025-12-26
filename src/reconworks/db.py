@@ -109,6 +109,32 @@ def insert_cleaning_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
     conn.execute(f"INSERT INTO cleaning_runs ({cols}) VALUES ({placeholders});", values)
     conn.commit()
 
+
+
+def create_normalization_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS normalization_runs ("
+        " normalized_at_utc TEXT,"
+        " batch_id TEXT,"
+        " source_name TEXT,"
+        " input_table TEXT,"
+        " output_table TEXT,"
+        " alias_file TEXT,"
+        " row_count INTEGER,"
+        " alias_match_count INTEGER,"
+        " no_match_count INTEGER"
+        ");"
+    )
+    conn.commit()
+
+def insert_normalization_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
+    keys = list(row.keys())
+    placeholders = ",".join(["?"] * len(keys))
+    cols = ",".join([f'"{k}"' for k in keys])
+    values = [row[k] for k in keys]
+    conn.execute(f"INSERT INTO normalization_runs ({cols}) VALUES ({placeholders});", values)
+    conn.commit()
+
 def latest_batch_id(conn: sqlite3.Connection) -> Optional[str]:
     cur = conn.execute("SELECT batch_id FROM ingest_files ORDER BY ingested_at_utc DESC LIMIT 1;")
     row = cur.fetchone()
