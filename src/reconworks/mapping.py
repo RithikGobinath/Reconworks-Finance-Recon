@@ -96,6 +96,9 @@ def map_source(
     df["mapping_notes"] = "; ".join(notes)
 
     if table_exists(conn, out_table):
+        # Make mapping idempotent for a given batch_id: re-running `map` replaces that batch’s output.
+        conn.execute(f"DELETE FROM {out_table} WHERE batch_id = ?", (batch_id,))
+        conn.commit()
         add_columns_text(conn, out_table, df.columns)
 
     df.to_sql(out_table, conn, if_exists="append", index=False)
