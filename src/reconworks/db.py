@@ -139,3 +139,26 @@ def latest_batch_id(conn: sqlite3.Connection) -> Optional[str]:
     cur = conn.execute("SELECT batch_id FROM ingest_files ORDER BY ingested_at_utc DESC LIMIT 1;")
     row = cur.fetchone()
     return row[0] if row else None
+
+
+def create_modeling_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS modeling_runs ("
+        " modeled_at_utc TEXT,"
+        " batch_id TEXT,"
+        " source_name TEXT,"
+        " input_table TEXT,"
+        " output_table TEXT,"
+        " row_count INTEGER,"
+        " distinct_vendor_count INTEGER"
+        ");"
+    )
+    conn.commit()
+
+def insert_modeling_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
+    keys = list(row.keys())
+    placeholders = ",".join(["?"] * len(keys))
+    cols = ",".join([f'"{k}"' for k in keys])
+    values = [row[k] for k in keys]
+    conn.execute(f"INSERT INTO modeling_runs ({cols}) VALUES ({placeholders});", values)
+    conn.commit()

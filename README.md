@@ -51,3 +51,18 @@ python -m reconworks normalize --config config.toml --export-csv
 Outputs:
 - SQLite DB: `out/sqlite/reconworks.db`
 - CSVs: `out/csv/*.csv`
+
+## Stage 5: Modeling (dim/fact tables)
+Builds:
+- `dim_vendor` (unique canonical vendors)
+- `fact_transactions`
+- `fact_vendor_payments`
+
+Run:
+```bash
+python -m reconworks model --config config.toml --export-csv
+```
+
+Outputs:
+- SQLite: `dim_vendor`, `fact_transactions`, `fact_vendor_payments`
+- CSV: `out/csv/fact_transactions.csv`, `out/csv/fact_vendor_payments.csv`
