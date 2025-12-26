@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .pipeline import run_ingest, run_mapping, run_cleaning, run_normalize, run_model
+from .pipeline import run_ingest, run_mapping, run_cleaning, run_normalize, run_model, run_qa
 from .sample_data import write_sample_raw
 
 def main() -> None:
@@ -16,30 +16,36 @@ def main() -> None:
     p_ingest = sub.add_parser("ingest", help="Stage 1: ingest raw inputs into SQLite staging tables")
     p_ingest.add_argument("--config", default="config.toml", help="Path to config.toml")
     p_ingest.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
-    p_ingest.add_argument("--export-csv", action="store_true", help="Export staging tables to out/csv/")
+    p_ingest.add_argument("--export-csv", action="store_true", help="Export latest batch staging tables to out/csv/")
 
-    p_map = sub.add_parser("map", help="Stage 2: map raw columns into canonical fields (vendor_raw/date_raw/amount_raw)")
-    p_map.add_argument("--config", default="config.toml", help="Path to config.toml")
-    p_map.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
-    p_map.add_argument("--batch-id", default=None, help="Batch id to map (default: latest)")
-    p_map.add_argument("--export-csv", action="store_true", help="Export mapped tables to out/csv/")
+    p_map = sub.add_parser("map", help="Stage 2: map raw columns into canonical fields")
+    p_map.add_argument("--config", default="config.toml")
+    p_map.add_argument("--repo-root", default=".")
+    p_map.add_argument("--batch-id", default=None)
+    p_map.add_argument("--export-csv", action="store_true")
 
-    p_clean = sub.add_parser("clean", help="Stage 3: parse/clean mapped fields into typed columns (date, amount_cents)")
-    p_clean.add_argument("--config", default="config.toml", help="Path to config.toml")
-    p_clean.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
-    p_clean.add_argument("--batch-id", default=None, help="Batch id to clean (default: latest)")
-    p_clean.add_argument("--export-csv", action="store_true", help="Export clean tables to out/csv/")
+    p_clean = sub.add_parser("clean", help="Stage 3: clean mapped data (parse date + amount)")
+    p_clean.add_argument("--config", default="config.toml")
+    p_clean.add_argument("--repo-root", default=".")
+    p_clean.add_argument("--batch-id", default=None)
+    p_clean.add_argument("--export-csv", action="store_true")
 
-    p_norm = sub.add_parser("normalize", help="Stage 4: normalize vendors using vendor_aliases.csv")
-    p_norm.add_argument("--config", default="config.toml", help="Path to config.toml")
-    p_norm.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
-    p_norm.add_argument("--batch-id", default=None, help="Batch id to normalize (default: latest)")
-    p_norm.add_argument("--export-csv", action="store_true", help="Export normalized tables to out/csv/")
+    p_norm = sub.add_parser("normalize", help="Stage 4: normalize vendors using alias rules")
+    p_norm.add_argument("--config", default="config.toml")
+    p_norm.add_argument("--repo-root", default=".")
+    p_norm.add_argument("--batch-id", default=None)
+    p_norm.add_argument("--export-csv", action="store_true")
 
-    p_model = sub.add_parser("model", help="Stage 5: build dim/fact tables for reporting & matching")
-    p_model.add_argument("--config", default="config.toml", help="Path to config.toml")
-    p_model.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
-    p_model.add_argument("--export-csv", action="store_true", help="Export fact tables to out/csv/")
+    p_model = sub.add_parser("model", help="Stage 5: build dim_vendor + fact tables")
+    p_model.add_argument("--config", default="config.toml")
+    p_model.add_argument("--repo-root", default=".")
+    p_model.add_argument("--export-csv", action="store_true")
+
+    p_qa = sub.add_parser("qa", help="Stage 6: QA checks (flags + policy rules)")
+    p_qa.add_argument("--config", default="config.toml")
+    p_qa.add_argument("--repo-root", default=".")
+    p_qa.add_argument("--batch-id", default=None)
+    p_qa.add_argument("--export-csv", action="store_true")
 
     args = parser.parse_args()
     repo_root = Path(args.repo_root).resolve()
@@ -83,6 +89,13 @@ def main() -> None:
         print("✅ Modeling complete.")
         for k, v in summary.items():
             print(f"  - {k}: {v} rows modeled")
+        return
+
+    if args.cmd == "qa":
+        summary = run_qa(repo_root=repo_root, config_path=repo_root / args.config, batch_id=args.batch_id, export_csv=bool(args.export_csv))
+        print("✅ QA complete.")
+        for k, v in summary.items():
+            print(f"  - {k}: {v}")
         return
 
 if __name__ == "__main__":

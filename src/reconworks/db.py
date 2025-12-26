@@ -162,3 +162,43 @@ def insert_modeling_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
     values = [row[k] for k in keys]
     conn.execute(f"INSERT INTO modeling_runs ({cols}) VALUES ({placeholders});", values)
     conn.commit()
+
+
+def create_qa_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS qa_runs (
+            batch_id TEXT,
+            qa_at_utc TEXT,
+            policy_rules_path TEXT
+        );
+        """
+    )
+    conn.commit()
+
+def create_qa_flags_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS qa_flags (
+            batch_id TEXT,
+            record_type TEXT,
+            record_id TEXT,
+            flag_code TEXT,
+            severity TEXT,
+            message TEXT,
+            vendor_canonical TEXT,
+            vendor_id TEXT,
+            date TEXT,
+            amount_cents INTEGER,
+            source_file TEXT,
+            source_row_number INTEGER,
+            row_hash TEXT,
+            created_at_utc TEXT
+        );
+        """
+    )
+    conn.commit()
+
+def delete_where_batch(conn: sqlite3.Connection, table: str, batch_id: str) -> None:
+    conn.execute(f"DELETE FROM {table} WHERE batch_id=?", (batch_id,))
+    conn.commit()

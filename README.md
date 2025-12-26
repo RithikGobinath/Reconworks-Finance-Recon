@@ -66,3 +66,22 @@ python -m reconworks model --config config.toml --export-csv
 Outputs:
 - SQLite: `dim_vendor`, `fact_transactions`, `fact_vendor_payments`
 - CSV: `out/csv/fact_transactions.csv`, `out/csv/fact_vendor_payments.csv`
+
+
+## Stage 6: QA checks
+
+Run:
+```bash
+python -m reconworks qa --config config.toml --export-csv
+```
+
+Outputs:
+- SQLite: `qa_flags`, `qa_runs`
+- CSV: `out/csv/qa_flags.csv`
+
+Optional: add `data/reference/policy_rules.csv` to define custom flags.
+Example:
+```csv
+flag_code,field,op,value,severity,message,applies_to
+POLICY_REVIEW_OVER_20,amount_cents,>,2000,info,Review transactions over $20,transactions
+```

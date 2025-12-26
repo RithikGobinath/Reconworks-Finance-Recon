@@ -1,0 +1,2 @@
+flag_code,field,op,value,severity,message,applies_to
+POLICY_REVIEW_OVER_20,amount_cents,>,2000,info,Review transactions over $20,transactions

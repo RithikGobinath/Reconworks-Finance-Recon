@@ -24,6 +24,7 @@ class ProjectConfig:
     database_path: str
     sources: Dict[str, SourceConfig]
     vendor_aliases_path: str = "data/reference/vendor_aliases.csv"
+    policy_rules_path: str = "data/reference/policy_rules.csv"
 
 def _lower_list(xs: List[str]) -> List[str]:
     return [str(x).strip().lower() for x in xs if str(x).strip()]
@@ -56,4 +57,5 @@ def load_config(config_path: str | Path) -> ProjectConfig:
         database_path=str(project.get("database_path", "out/sqlite/reconworks.db")),
         sources=sources,
         vendor_aliases_path=str(reference.get("vendor_aliases_path", "data/reference/vendor_aliases.csv")),
+        policy_rules_path=str(reference.get("policy_rules_path", "data/reference/policy_rules.csv")),
     )
