@@ -3,7 +3,19 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .pipeline import run_ingest, run_mapping, run_cleaning, run_normalize, run_model, run_qa
+from .pipeline import (
+    run_ingest,
+    run_mapping,
+    run_cleaning,
+    run_normalize,
+    run_model,
+    run_qa,
+    run_match,
+    run_exceptions,
+    run_report,
+    run_build_excel,
+    run_publish_pq,
+)
 from .sample_data import write_sample_raw
 
 def main() -> None:
@@ -11,12 +23,12 @@ def main() -> None:
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_init = sub.add_parser("init-sample-data", help="Generate small sample raw CSV files under data/raw/")
-    p_init.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
+    p_init.add_argument("--repo-root", default=".")
 
     p_ingest = sub.add_parser("ingest", help="Stage 1: ingest raw inputs into SQLite staging tables")
-    p_ingest.add_argument("--config", default="config.toml", help="Path to config.toml")
-    p_ingest.add_argument("--repo-root", default=".", help="Repo root path (default: current directory)")
-    p_ingest.add_argument("--export-csv", action="store_true", help="Export latest batch staging tables to out/csv/")
+    p_ingest.add_argument("--config", default="config.toml")
+    p_ingest.add_argument("--repo-root", default=".")
+    p_ingest.add_argument("--export-csv", action="store_true")
 
     p_map = sub.add_parser("map", help="Stage 2: map raw columns into canonical fields")
     p_map.add_argument("--config", default="config.toml")
@@ -47,6 +59,33 @@ def main() -> None:
     p_qa.add_argument("--batch-id", default=None)
     p_qa.add_argument("--export-csv", action="store_true")
 
+    p_match = sub.add_parser("match", help="Stage 7: matching / reconciliation")
+    p_match.add_argument("--config", default="config.toml")
+    p_match.add_argument("--repo-root", default=".")
+    p_match.add_argument("--batch-id", default=None)
+    p_match.add_argument("--export-csv", action="store_true")
+
+    p_exc = sub.add_parser("exceptions", help="Stage 8: build exceptions table")
+    p_exc.add_argument("--config", default="config.toml")
+    p_exc.add_argument("--repo-root", default=".")
+    p_exc.add_argument("--batch-id", default=None)
+    p_exc.add_argument("--export-csv", action="store_true")
+
+    p_rpt = sub.add_parser("report", help="Stage 9: reporting marts")
+    p_rpt.add_argument("--config", default="config.toml")
+    p_rpt.add_argument("--repo-root", default=".")
+    p_rpt.add_argument("--batch-id", default=None)
+    p_rpt.add_argument("--export-csv", action="store_true")
+
+    p_xl = sub.add_parser("build-excel", help="Stage 10: build Excel dashboard workbook")
+    p_xl.add_argument("--config", default="config.toml")
+    p_xl.add_argument("--repo-root", default=".")
+
+    p_pq = sub.add_parser("publish-pq", help="Optional: publish Power Query folder drop from out/csv/")
+    p_pq.add_argument("--config", default="config.toml")
+    p_pq.add_argument("--repo-root", default=".")
+    p_pq.add_argument("--batch-id", default=None)
+
     args = parser.parse_args()
     repo_root = Path(args.repo_root).resolve()
 
@@ -60,7 +99,6 @@ def main() -> None:
         print("✅ Ingest complete.")
         for k, v in summary.items():
             print(f"  - {k}: {v} rows")
-        print(f"DB: {(repo_root / 'out' / 'sqlite' / 'reconworks.db')}")
         return
 
     if args.cmd == "map":
@@ -94,6 +132,41 @@ def main() -> None:
     if args.cmd == "qa":
         summary = run_qa(repo_root=repo_root, config_path=repo_root / args.config, batch_id=args.batch_id, export_csv=bool(args.export_csv))
         print("✅ QA complete.")
+        for k, v in summary.items():
+            print(f"  - {k}: {v}")
+        return
+
+    if args.cmd == "match":
+        summary = run_match(repo_root=repo_root, config_path=repo_root / args.config, batch_id=args.batch_id, export_csv=bool(args.export_csv))
+        print("✅ Matching complete.")
+        for k, v in summary.items():
+            print(f"  - {k}: {v}")
+        return
+
+    if args.cmd == "exceptions":
+        summary = run_exceptions(repo_root=repo_root, config_path=repo_root / args.config, batch_id=args.batch_id, export_csv=bool(args.export_csv))
+        print("✅ Exceptions complete.")
+        for k, v in summary.items():
+            print(f"  - {k}: {v}")
+        return
+
+    if args.cmd == "report":
+        summary = run_report(repo_root=repo_root, config_path=repo_root / args.config, batch_id=args.batch_id, export_csv=bool(args.export_csv))
+        print("✅ Reporting complete.")
+        for k, v in summary.items():
+            print(f"  - {k}: {v}")
+        return
+
+    if args.cmd == "build-excel":
+        summary = run_build_excel(repo_root=repo_root, config_path=repo_root / args.config)
+        print("✅ Excel built.")
+        for k, v in summary.items():
+            print(f"  - {k}: {v}")
+        return
+
+    if args.cmd == "publish-pq":
+        summary = run_publish_pq(repo_root=repo_root, config_path=repo_root / args.config, batch_id=args.batch_id)
+        print("✅ Power Query drop published.")
         for k, v in summary.items():
             print(f"  - {k}: {v}")
         return

@@ -8,3 +8,6 @@ out/
 
 data/raw/*
 !data/raw/*sample*.csv
+
+# Power Query folder drops
+out/pq_drop/

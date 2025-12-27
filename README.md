@@ -85,3 +85,75 @@ Example:
 flag_code,field,op,value,severity,message,applies_to
 POLICY_REVIEW_OVER_20,amount_cents,>,2000,info,Review transactions over $20,transactions
 ```
+
+
+## Stage 7: Matching (reconciliation engine)
+
+Run:
+```bash
+python -m reconworks match --config config.toml --export-csv
+```
+
+Outputs:
+- SQLite: `match_candidates`, `matches`, `matching_runs`
+- CSV: `out/csv/match_candidates.csv`, `out/csv/matches.csv`, `out/csv/unmatched_transactions.csv`, `out/csv/unmatched_vendor_payments.csv`
+
+Matching uses fuzzy vendor similarity via RapidFuzz token set ratio (robust to extra tokens). 
+
+Tune thresholds in `config.toml` under `[matching]`.
+
+## Stage 8: Exceptions (actionable review list)
+
+Run:
+```bash
+python -m reconworks exceptions --config config.toml --export-csv
+```
+
+Outputs:
+- SQLite: `exceptions`, `exception_runs`
+- CSV: `out/csv/exceptions.csv`
+
+Exceptions include QA flags + unmatched items + low-confidence matches.
+
+## Stage 9: Reporting marts (pivot-friendly)
+
+Run:
+```bash
+python -m reconworks report --config config.toml --export-csv
+```
+
+Outputs:
+- SQLite: `rpt_spend_by_month_vendor`, `rpt_match_rate_by_month`, `rpt_exceptions_by_code`, `rpt_top_vendors`
+- CSV exports in `out/csv/`
+
+## Stage 10: Excel dashboard
+
+Run:
+```bash
+python -m reconworks build-excel --config config.toml
+```
+
+Creates `out/excel/recon_dashboard.xlsx` with:
+- Summary KPIs
+- Exceptions, Matches, QA flags
+- Spend + match-rate sheets
+- Simple charts (openpyxl). 
+
+Optional (Excel users): you can also connect Excel to `out/csv/` using Power Query “From Folder” and refresh to pull the latest CSV outputs. 
+
+## Convenience: run stages 6-9
+
+```bash
+python -m reconworks postmodel --config config.toml --export-csv
+```
+
+
+## Optional: Power Query refresh workflow
+
+If you want an ops-style Excel that refreshes from folder drops, see `docs/powerquery_refresh.md`.
+
+Quick start:
+```bash
+python -m reconworks publish-pq --config config.toml
+```
+Then in Excel: Data → Get Data → From Folder → Combine & Transform.

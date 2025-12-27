@@ -22,3 +22,24 @@ amount_raw = ["amount", "amt", "payment_amount"]
 [reference]
 vendor_aliases_path = "data/reference/vendor_aliases.csv"
 policy_rules_path = "data/reference/policy_rules.csv"
+
+
+[matching]
+date_window_days = 3
+amount_tolerance_cents = 0
+min_score = 0.85
+low_confidence_threshold = 0.90
+vendor_weight = 0.6
+date_weight = 0.3
+amount_weight = 0.1
+
+[reporting]
+top_n_vendors = 20
+
+[excel]
+output_path = "out/excel/recon_dashboard.xlsx"
+
+[powerquery]
+# Where Power Query reads from. Use 'latest' for stable filenames or 'history' for folder-combine.
+drop_root = "out/pq_drop"
+mode = "history"

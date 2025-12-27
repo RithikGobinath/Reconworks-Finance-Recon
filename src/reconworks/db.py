@@ -202,3 +202,131 @@ def create_qa_flags_table(conn: sqlite3.Connection) -> None:
 def delete_where_batch(conn: sqlite3.Connection, table: str, batch_id: str) -> None:
     conn.execute(f"DELETE FROM {table} WHERE batch_id=?", (batch_id,))
     conn.commit()
+
+
+def create_matching_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS matching_runs ("
+        " matched_at_utc TEXT,"
+        " batch_id TEXT,"
+        " date_window_days INTEGER,"
+        " amount_tolerance_cents INTEGER,"
+        " min_score REAL,"
+        " match_count INTEGER,"
+        " unmatched_tx_count INTEGER,"
+        " unmatched_pay_count INTEGER"
+        ");"
+    )
+    conn.commit()
+
+def create_match_candidates_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS match_candidates ("
+        " batch_id TEXT,"
+        " txn_id TEXT,"
+        " pay_id TEXT,"
+        " vendor_sim REAL,"
+        " date_diff_days INTEGER,"
+        " amount_diff_cents INTEGER,"
+        " score REAL"
+        ");"
+    )
+    conn.commit()
+
+def create_matches_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS matches ("
+        " batch_id TEXT,"
+        " txn_id TEXT,"
+        " pay_id TEXT,"
+        " match_score REAL,"
+        " match_type TEXT,"
+        " vendor_sim REAL,"
+        " date_diff_days INTEGER,"
+        " amount_diff_cents INTEGER,"
+        " matched_at_utc TEXT"
+        ");"
+    )
+    conn.commit()
+
+def insert_matching_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
+    keys = list(row.keys())
+    placeholders = ",".join(["?"] * len(keys))
+    cols = ",".join([f'"{k}"' for k in keys])
+    values = [row[k] for k in keys]
+    conn.execute(f"INSERT INTO matching_runs ({cols}) VALUES ({placeholders});", values)
+    conn.commit()
+
+def create_exceptions_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS exception_runs ("
+        " created_at_utc TEXT,"
+        " batch_id TEXT,"
+        " exception_count INTEGER"
+        ");"
+    )
+    conn.commit()
+
+def create_exceptions_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS exceptions ("
+        " batch_id TEXT,"
+        " exception_id TEXT,"
+        " record_type TEXT,"
+        " record_id TEXT,"
+        " related_record_id TEXT,"
+        " exception_code TEXT,"
+        " severity TEXT,"
+        " message TEXT,"
+        " recommended_action TEXT,"
+        " vendor_canonical TEXT,"
+        " vendor_id TEXT,"
+        " date TEXT,"
+        " amount_cents INTEGER,"
+        " created_at_utc TEXT"
+        ");"
+    )
+    conn.commit()
+
+def insert_exception_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
+    keys = list(row.keys())
+    placeholders = ",".join(["?"] * len(keys))
+    cols = ",".join([f'"{k}"' for k in keys])
+    values = [row[k] for k in keys]
+    conn.execute(f"INSERT INTO exception_runs ({cols}) VALUES ({placeholders});", values)
+    conn.commit()
+
+def create_reporting_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS report_runs ("
+        " created_at_utc TEXT,"
+        " batch_id TEXT"
+        ");"
+    )
+    conn.commit()
+
+def insert_report_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
+    keys = list(row.keys())
+    placeholders = ",".join(["?"] * len(keys))
+    cols = ",".join([f'"{k}"' for k in keys])
+    values = [row[k] for k in keys]
+    conn.execute(f"INSERT INTO report_runs ({cols}) VALUES ({placeholders});", values)
+    conn.commit()
+
+def create_excel_runs_table(conn: sqlite3.Connection) -> None:
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS excel_runs ("
+        " created_at_utc TEXT,"
+        " batch_id TEXT,"
+        " output_path TEXT"
+        ");"
+    )
+    conn.commit()
+
+def insert_excel_run(conn: sqlite3.Connection, row: Dict[str, Any]) -> None:
+    keys = list(row.keys())
+    placeholders = ",".join(["?"] * len(keys))
+    cols = ",".join([f'"{k}"' for k in keys])
+    values = [row[k] for k in keys]
+    conn.execute(f"INSERT INTO excel_runs ({cols}) VALUES ({placeholders});", values)
+    conn.commit()
