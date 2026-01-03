@@ -418,33 +418,6 @@ pytest -q
 
 ---
 
-## Release plan (portfolio-ready)
-
-When you’re ready to ship a “real” release on GitHub:
-
-1. **Freeze a version** using Semantic Versioning (`MAJOR.MINOR.PATCH`)
-2. Write a clean `CHANGELOG.md` (Keep a Changelog format is a good standard)
-3. Align version numbers in:
-   - `pyproject.toml` (`[project].version`)
-   - `src/reconworks/__init__.py` (`__version__`)
-4. Run tests (`pytest`)
-5. Build the package:
-   - `python -m pip install --upgrade build`
-   - `python -m build`
-6. Create a git tag (example `v1.0.0`) and push it
-7. Create a GitHub Release from that tag
-8. Attach a demo artifact (example: `recon_dashboard.xlsx` + a small sample dataset)
-
-Suggested first release name:
-- **v1.0.0 — “Month-end Reconciliation MVP”**
-  - stages 1–10 working
-  - Power Query drop publisher working
-  - docs + changelog included
-
-If you want a step-by-step checklist you can follow, add `docs/RELEASING.md` (example template included in the release pack).
-
----
-
 ## Notes / limitations (honest + helpful)
 
 - This is intentionally built for “finance ops scale” (thousands to low millions of rows).  
