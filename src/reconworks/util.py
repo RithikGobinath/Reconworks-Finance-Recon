@@ -11,6 +11,10 @@ from typing import Any, Dict, Iterable, List, Tuple
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
+def utc_now_compact() -> str:
+    """UTC timestamp formatted for filenames, e.g. 20260102T174530Z"""
+    return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 

@@ -1,0 +1,5 @@
+Add this to the bottom of config.toml (optional):
+
+[powerquery]
+drop_root = "out/pq_drop"
+mode = "history"   # "history" (folder combine) or "latest" (stable filenames)

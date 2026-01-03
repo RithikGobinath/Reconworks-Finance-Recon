@@ -39,7 +39,7 @@ top_n_vendors = 20
 [excel]
 output_path = "out/excel/recon_dashboard.xlsx"
 
+
 [powerquery]
-# Where Power Query reads from. Use 'latest' for stable filenames or 'history' for folder-combine.
 drop_root = "out/pq_drop"
 mode = "history"

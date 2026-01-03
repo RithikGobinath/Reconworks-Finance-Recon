@@ -14,6 +14,7 @@ from .matching import match_all
 from .exceptions import exceptions_all
 from .reporting import reports_all
 from .excel_dashboard import build_excel
+from .powerquery_publish import publish_powerquery_drop
 
 def run_ingest(repo_root: Path, config_path: Path, export_csv: bool = False) -> Dict[str, int]:
     cfg = load_config(config_path)
@@ -67,7 +68,14 @@ def run_postmodel(repo_root: Path, config_path: Path, batch_id: Optional[str] = 
     r = run_reports(repo_root, config_path, batch_id=batch_id, export_csv=export_csv)
     return {**{f"qa_{k}": v for k,v in qa.items()}, **{f"match_{k}": v for k,v in m.items()}, **e, **r}
 
-from .powerquery_publish import publish_powerquery_drop
+
+def run_report(repo_root: Path, config_path: Path, batch_id: Optional[str] = None, export_csv: bool = False) -> Dict[str, int]:
+    """Alias for run_reports (compat with earlier CLI variants)."""
+    return run_reports(repo_root=repo_root, config_path=config_path, batch_id=batch_id, export_csv=export_csv)
+
+def run_build_excel(repo_root: Path, config_path: Path, batch_id: Optional[str] = None) -> Dict[str, int]:
+    """Alias for run_excel (compat with earlier CLI variants)."""
+    return run_excel(repo_root=repo_root, config_path=config_path, batch_id=batch_id)
 
 def run_publish_pq(repo_root: Path, config_path: Path, batch_id: Optional[str] = None) -> Dict[str, int]:
     cfg = load_config(config_path)
